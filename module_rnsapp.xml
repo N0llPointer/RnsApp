@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_rnsapp" default="compile.module.rnsapp">
+  <dirname property="module.rnsapp.basedir" file="${ant.file.module_rnsapp}"/>
+  
+  <property name="module.jdk.home.rnsapp" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.rnsapp" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.rnsapp" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.rnsapp" value="-encoding UTF-8 -source 9 -target 9 ${compiler.args}"/>
+  
+  <property name="rnsapp.output.dir" value="${module.rnsapp.basedir}/out/production/RnsApp"/>
+  <property name="rnsapp.testoutput.dir" value="${module.rnsapp.basedir}/out/test/RnsApp"/>
+  
+  <path id="rnsapp.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="rnsapp.module.production.classpath">
+    <path refid="${module.jdk.classpath.rnsapp}"/>
+  </path>
+  
+  <path id="rnsapp.runtime.production.module.classpath">
+    <pathelement location="${rnsapp.output.dir}"/>
+  </path>
+  
+  <path id="rnsapp.module.classpath">
+    <path refid="${module.jdk.classpath.rnsapp}"/>
+    <pathelement location="${rnsapp.output.dir}"/>
+  </path>
+  
+  <path id="rnsapp.runtime.module.classpath">
+    <pathelement location="${rnsapp.testoutput.dir}"/>
+    <pathelement location="${rnsapp.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.rnsapp">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.rnsapp">
+    <patternset refid="excluded.from.module.rnsapp"/>
+  </patternset>
+  
+  <path id="rnsapp.module.sourcepath">
+    <dirset dir="${module.rnsapp.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.rnsapp" depends="compile.module.rnsapp.production,compile.module.rnsapp.tests" description="Compile module RnsApp"/>
+  
+  <target name="compile.module.rnsapp.production" depends="register.custom.compilers" description="Compile module RnsApp; production classes">
+    <mkdir dir="${rnsapp.output.dir}"/>
+    <javac2 destdir="${rnsapp.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.rnsapp}/javac">
+      <compilerarg line="${compiler.args.rnsapp}"/>
+      <bootclasspath refid="rnsapp.module.bootclasspath"/>
+      <classpath refid="rnsapp.module.production.classpath"/>
+      <src refid="rnsapp.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.rnsapp"/>
+    </javac2>
+    
+    <copy todir="${rnsapp.output.dir}">
+      <fileset dir="${module.rnsapp.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.rnsapp.tests" depends="register.custom.compilers,compile.module.rnsapp.production" description="compile module RnsApp; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.rnsapp" description="cleanup module">
+    <delete dir="${rnsapp.output.dir}"/>
+    <delete dir="${rnsapp.testoutput.dir}"/>
+  </target>
+</project>
